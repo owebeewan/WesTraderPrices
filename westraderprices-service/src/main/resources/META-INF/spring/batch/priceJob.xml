@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<job id="YahooPrices" restartable="true" job-repository="jobRepository" >
+
+ 		<step id="importPricesStep">
+ 			<tasklet>
+ 				<chunk reader="yahooPriceReader" writer="priceWriter" commit-interval="1000">
+ 				</chunk>
+ 			</tasklet>
+ 		</step>
+ 		
+	</job>
+</beans:beans>

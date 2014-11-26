@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+ 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+ 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+ 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <description>Spring Batch infrastructure beans.</description>
+                         
+    <context:property-placeholder location="classpath*:META-INF/spring/*.properties" 
+    		local-override="true" properties-ref="localProperties" />
+ 
+    <util:properties id="localProperties">
+    	<prop key="persistenceUnitName">persistenceUnit</prop>
+    </util:properties>
+   
+    <bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator"
+	  p:jobLauncher-ref="jobLauncher" p:jobExplorer-ref="jobExplorer"
+	  p:jobRepository-ref="jobRepository" p:jobRegistry-ref="jobRegistry" />
+
+    <bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
+			p:dataSource-ref="dataSource" />
+
+    <bean id="jobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
+		
+    <bean class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor" 
+			p:jobRegistry-ref="jobRegistry" />
+	
+    <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher"
+			p:jobRepository-ref="jobRepository" />
+	
+    <bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean"
+    		p:dataSource-ref="dataSource" 
+			p:transactionManager-ref="transactionManager" />
+          
+    <!-- provides step scope, not needed, existence of xmlns for spring batch is enough -->
+    <!--<bean class="org.springframework.batch.core.scope.StepScope" />-->
+    
+</beans>
+
+  

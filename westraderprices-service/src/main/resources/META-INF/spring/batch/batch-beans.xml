@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<context:property-placeholder location="classpath*:META-INF/*.properties"
+		local-override="true" properties-ref="localProperties" />
+	<context:annotation-config />
+	
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="50" />
+	</bean>
+
+	<bean name="priceLineTokenizer"
+	    class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer" />
+
+	<bean id="priceMapper" class="com.westraderprices.service.PriceFieldSetMapper" />
+
+	<bean name="priceLineMapper"
+	    class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+	        <property name="fieldSetMapper" ref="priceMapper" />
+	        <property name="lineTokenizer" ref="priceLineTokenizer" />
+	</bean>
+
+	<bean name="yahooPriceReader"
+	    class="org.springframework.batch.item.file.FlatFileItemReader">
+	    <property name="resource" value="http://real-chart.finance.yahoo.com/table.csv?s=^VIX&amp;a=2&amp;b=0&amp;c=1990&amp;d=11&amp;e=0&amp;f=2014&amp;g=d" />
+	    <property name="lineMapper" ref="priceLineMapper" />
+	</bean>
+</beans>
